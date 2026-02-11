@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>8ells — Speak to the Future</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050508;
+      --fg: #eaeaf0;
+      --muted: #9a9ab0;
+      --accent: #8f7cff;
+      --accent-glow: rgba(143,124,255,0.6);
+      --danger: #ff6a6a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 70% 10%, rgba(143,124,255,0.15), transparent 60%),
+        radial-gradient(800px 500px at 20% 80%, rgba(255,106,106,0.12), transparent 60%),
+        var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    /* Grain overlay */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 32px 40px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .oracle {
+      max-width: 820px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .oracle h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 600;
+      line-height: 1.1;
+      margin: 0 0 24px;
+    }
+
+    .oracle h1 em {
+      font-style: italic;
+      color: var(--accent);
+      text-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    .oracle p {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: none;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px 24px 56px;
+      color: var(--fg);
+      font-size: 18px;
+      outline: none;
+      backdrop-filter: blur(10px);
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    textarea::placeholder {
+      color: #7d7d95;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-glow),
+                  0 0 40px rgba(143,124,255,0.25);
+    }
+
+    .cta {
+      position: absolute;
+      right: 16px;
+      bottom: 14px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #b69cff);
+      color: #050508;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(143,124,255,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 40px rgba(143,124,255,0.6);
+    }
+
+    .hint {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #7a7a90;
+      opacity: 0.9;
+    }
+
+    .sig {
+      letter-spacing: 0.12em;
+    }
+
+    .legal {
+      opacity: 0.7;
+    }
+
+    /* Floating glyphs */
+    .glyph {
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-size: 120px;
+      opacity: 0.03;
+      user-select: none;
+      pointer-events: none;
+      animation: drift 40s linear infinite;
+    }
+
+    .g1 { top: 10%; left: 8%; animation-duration: 50s; }
+    .g2 { top: 60%; left: 70%; animation-duration: 45s; }
+    .g3 { top: 30%; left: 85%; animation-duration: 60s; }
+
+    @keyframes drift {
+      from { transform: translateY(0); }
+      to { transform: translateY(-200px); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="glyph g1">✶</div>
+  <div class="glyph g2">☽</div>
+  <div class="glyph g3">∞</div>
+
+  <div class="container">
+    <header>
+      <div class="logo">8<span>ELLS</span></div>
+      <div class="status">THE ORACLE IS LISTENING</div>
+    </header>
+
+    <main>
+      <div class="oracle">
+        <h1>
+          Speak.<br />
+          <em>The future listens.</em>
+        </h1>
+
+        <p>
+          Names. Questions. Secrets. Doubts.  
+          There is no format. Only intention.
+        </p>
+
+        <div class="input-wrap">
+          <textarea placeholder="Say anything…"></textarea>
+          <button class="cta">REVEAL</button>
+        </div>
+
+        <div class="hint">
+          Powered by symbolic intelligence · Not advice · Only reflection
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="sig">EIGHT SIGNALS · ONE THREAD</div>
+      <div class="legal">© 2026 8ells</div>
+    </footer>
+  </div>
+
+</body>
+</html>
